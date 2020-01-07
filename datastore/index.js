@@ -10,16 +10,24 @@ var items = {};
 exports.create = (text, callback) => {
   counter.getNextUniqueId(function(err, counter) {
     if (err) {
-      throw err;
-    }
-    else {
-      fs.writeFile(`${counter}.txt`, text, (err, fileData) => {
-
+      callback(err);
+    } else {
+      var content = {
+        id: counter,
+        text: text
+      };
+      var path = `${exports.dataDir}/${counter}.txt`;
+      fs.writeFile(path, text, (err, fileData) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, content);
+        }
       });
     }
   });
-  console.log('This is  the text: ', text);
-  console.log('This is  the id: ', id);
+  // console.log('This is  the text: ', text);
+
 };
 
 
