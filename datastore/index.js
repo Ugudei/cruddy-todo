@@ -26,25 +26,51 @@ exports.create = (text, callback) => {
       });
     }
   });
-  // console.log('This is  the text: ', text);
-
 };
 
-
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir(exports.dataDir, function (err, files) {
+    if (err) {
+      callback(err);
+    } else {
+      var content2 = files.map(function(fileName) {
+        var text = fileName.substring(0, 5);
+        return { id: text,
+          text: text
+        };
+      });
+      callback(null, content2);
+    }
   });
-  callback(null, data);
+
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  // var text = items[id];
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
+  //
+  /*if (err) {
+    callback(err);
+  } else {*/
+  var path = `${exports.dataDir}/${id}.txt`;
+  console.log(id);
+  fs.readFile(path, 'utf8', (err, fileData) => {
+    var content = {
+      id: id,
+      text: fileData
+    };
+    if (err) {
+      callback(err);
+    } else {
+      console.log('This is fileData ', fileData);
+      callback(null, content);
+    }
+  });
+// }
 };
 
 exports.update = (id, text, callback) => {
