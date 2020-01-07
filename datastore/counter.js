@@ -2,8 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
 
-var counter = 0;
-
 // Private helper functions ////////////////////////////////////////////////////
 
 // Zero padded numbers can only be represented as strings.
@@ -36,12 +34,30 @@ const writeCounter = (count, callback) => {
   });
 };
 
+// console.log('getNextUniqueID ', )
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (callback) => {
+
+  readCounter(function(err, counter) {
+    if (err) {
+      throw err;
+    } else {
+      writeCounter(++counter, function(err, counter) {
+        if (err) {
+          throw err;
+        } else {
+          callback (null, counter);
+        }
+      } );
+    }
+  });
 };
+/* 1) should use error first callback pattern
+   2) should give an id as a zero padded string
+   3) should give the next id based on the count in the file
+   4) should update the counter file with the next value
+ */
 
 
 
