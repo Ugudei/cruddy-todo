@@ -46,19 +46,11 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  // var text = items[id];
-  // if (!text) {
-  //   callback(new Error(`No item with id: ${id}`));
-  // } else {
-  //   callback(null, { id, text });
-  // }
-  //
-  /*if (err) {
-    callback(err);
-  } else {*/
+  // retrieve file with it's path
   var path = `${exports.dataDir}/${id}.txt`;
-  console.log(id);
+  // callback to read file path with optional string flag
   fs.readFile(path, 'utf8', (err, fileData) => {
+    // reading data and puting in object form for callback
     var content = {
       id: id,
       text: fileData
@@ -66,7 +58,7 @@ exports.readOne = (id, callback) => {
     if (err) {
       callback(err);
     } else {
-      console.log('This is fileData ', fileData);
+      // "return" content data in obj format.
       callback(null, content);
     }
   });
@@ -74,24 +66,29 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  // console.log('This is ID ', id);
+  // console.log('This is TEXT ', text);
+  var path = `${exports.dataDir}/${id}.txt`;
+  const flag = fs.constants.O_WRONLY | fs.constants.O_TRUNC;
+  fs.writeFile(path, text, {flag}, (err) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, { id, text });
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+
+  var path = `${exports.dataDir}/${id}.txt`;
+  fs.unlink(path, (err) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback();
+    }
+  });
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
